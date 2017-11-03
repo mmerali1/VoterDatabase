@@ -1,0 +1,17 @@
+all:	Voter
+	
+
+Voter:	Lab3.o VoterDatabase.o Voter.o
+	g++ Lab3.o VoterDatabase.o Voter.o -o Voter
+
+Lab3.o:	Lab3.cpp Voter.h VoterDatabase.h
+	g++ -std=c++14 Lab3.cpp -o Lab3
+
+Voter.o:	Voter.cpp Voter.h
+	g++ -std=c++14 Voter.cpp -o Lab3
+
+VoterDatabase.o:	VoterDatabase.cpp VoterDatabase.h
+	g++ -std=c++14 VoterDatabase.cpp -o Lab3
+
+clean:	
+	rm -f *.o Voter

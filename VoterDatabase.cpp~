@@ -1,0 +1,355 @@
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cctype>
+#include <ctype.h>
+using namespace std;
+#include "VoterDatabase.h"
+
+
+VoterDatabase::VoterDatabase(){}
+
+VoterDatabase::VoterDatabase(int maxVotersIn){
+	maxVoters = maxVotersIn;
+	voterArray = new Voter[maxVoters];
+	arrCounter = 0;
+}
+
+ 
+
+Voter VoterDatabase::voterLogin(){
+	Voter defVoter;
+	bool userFound = false;
+		string userLogin, passLogin;			
+		cout << "Enter User ID: ";
+		cin >> userLogin;
+		cout << "Enter password: ";
+		cin >> passLogin;	
+	
+		for (int i=0; i<arrCounter;i++){
+			if(userLogin == voterArray[i].getUserID()){
+				if (passLogin == voterArray[i].getPassword()){
+					voterArray[i].setLoggedIn(true);				
+					defVoter = voterArray[i];
+					userFound = true;
+				}
+			}				
+			else{cout << "Invalid Username or Password. Type 'Login' to try again: ";}
+					
+		}
+	return defVoter;
+}
+
+void VoterDatabase::voterNew(){
+	string lastName;
+	string firstName;
+	string userID;
+	string password;
+	string ageStr;
+	string streetNumStr;
+	string streetName;
+	string townName;
+	string stateIn;
+	string zipCode;	
+	
+
+	
+	bool isInput = true;
+	char ch;
+	int inCt = 0;
+	
+	//Checks Last Name for non-alpha chars
+	while(isInput){
+		inCt = 0;
+		cout << "Last Name: ";
+		//isInput = false;
+		cin >> lastName;
+		for(int i=0; i<lastName.length();i++){
+			ch=lastName.at(i);			
+			if (isalpha(ch)){
+				inCt++;
+			}
+		}	
+		if (inCt == lastName.length()){
+			isInput = false;
+		}
+	}
+	
+	//Checks First name for non-alpha chars
+	
+	isInput = true;	
+	while(isInput){	
+		inCt = 0;			
+		cout << "First Name: ";
+		cin >> firstName;
+		for(int i=0; i<firstName.length();i++){
+			ch=firstName.at(i);
+			if (isalpha(ch)){	
+				inCt++;
+			}
+		}	
+		if (inCt == firstName.length()){
+			isInput = false;
+		}	
+	}
+	
+	//Checks user id input
+	isInput = true;
+	bool inUse = false;
+	while(isInput){
+		inCt = 0;
+		cout << "User ID: ";		
+		cin >> userID;
+		for (int i=0; i<arrCounter;i++){
+			if(userID == voterArray[i].getUserID()){
+				inUse=true;
+				cout << "Username exists in database. " <<endl;
+			}
+		}
+		if (!(inUse)){
+			for(int i=0; i<userID.length();i++){
+				ch=userID.at(i);
+				if (isalnum(ch)){
+					inCt++;
+				}
+			}	
+			if ((inCt == userID.length()) && (4<inCt) && (inCt<11)){
+				isInput = false;
+			}
+		}
+	}
+	
+	//Checks password input
+	isInput = true;
+	int alphaCount=0; int numCount=0; int symbCount=0;
+	while(isInput){
+		cout << "Password: ";
+		cin >> password;
+		alphaCount=0;numCount=0;symbCount=0;
+		for(int i=0; i<password.length();i++){
+			ch=password.at(i);			
+			if (isalpha(ch)){
+				alphaCount++;
+			}
+			else if(isdigit(ch)){
+				numCount++;
+			}
+			else{
+				symbCount++;
+			}
+		}
+		if ((5<password.length()) && (1 <= numCount) && (1<=symbCount)){
+			isInput = false;
+		}			
+	}
+
+	//checks age input
+	isInput = true;
+	int age;
+	while(isInput){
+		inCt = 0;
+		cout << "Age: ";		
+		cin >> ageStr;
+		istringstream (ageStr)>>age;
+		for(int i=0; i<ageStr.length();i++){		
+			ch=ageStr.at(i);
+			if (isdigit(ch)){
+				inCt++;		
+			}
+		}
+		if ((age>=18) && inCt == ageStr.length()){
+					isInput = false;
+		}		
+	}
+	
+
+	//checks house number input
+	isInput = true;
+	int streetNum;
+	while(isInput){
+		inCt = 0;
+		cout << "House Number: ";		
+		cin >> streetNumStr;
+		istringstream (streetNumStr)>>streetNum;
+		for(int i=0; i<streetNumStr.length();i++){		
+			ch=streetNumStr.at(i);
+			if (isdigit(ch)){		
+				inCt++;				
+			}
+		}
+		if ((0<streetNum) && (inCt==streetNumStr.length())){
+					isInput = false;
+		}		
+	}
+
+		//Checks street name
+	cout << "Street Name: ";
+	getline(cin, streetName);
+	getline(cin, streetName);
+	
+	//Checks town name
+	cout << "Town: ";
+	getline(cin, townName);
+
+	//Checks state code	
+	Voter voterFunc;
+	isInput = true;
+	while(isInput){
+		cout << "Select a State: CT, MA, ME, NH, NY, PA, VT, RI: ";
+		cin >> stateIn;
+		if( "ct" == voterFunc.strLowerCase(stateIn) ||
+				"ma" == voterFunc.strLowerCase(stateIn) ||
+				"me" == voterFunc.strLowerCase(stateIn) ||
+				"nh" == voterFunc.strLowerCase(stateIn) ||
+				"ny" == voterFunc.strLowerCase(stateIn) ||
+				"pa" == voterFunc.strLowerCase(stateIn) ||	
+				"vt" == voterFunc.strLowerCase(stateIn) ||
+				"ri" == voterFunc.strLowerCase(stateIn)	){
+			isInput = false;
+		} else {
+			cout << "Invalid State Code. " ;
+		}
+	}
+
+	//checks Zip Code input
+	isInput = true;
+	while(isInput){
+		inCt = 0;
+		cout << "Zip Code: ";		
+		cin >> zipCode;
+		for(int i=0; i<zipCode.length();i++){		
+			ch=zipCode.at(i);
+			if (isdigit(ch)){	
+				inCt++;
+			}
+		}		
+		if (inCt == 5){ isInput = false;}
+	}
+
+	Voter voterObj(lastName, firstName, userID, password, age, streetNum, streetName, 								townName, stateIn , zipCode);
+	voterArray[arrCounter] = voterObj;
+	voterArray[arrCounter].viewVoter();	
+	arrCounter++;
+}
+
+void VoterDatabase::voterSave(){
+	string fileName;
+	cout << "Enter name of file: ";
+	cin >> fileName;
+	ofstream myFile(fileName.c_str());
+	string userIn;
+	if (!(myFile.fail())){
+		cout << "File already exists. Would You like to overwrite it (Y/N)? ";
+		cin >>userIn;
+		if (userIn == "y" || userIn == "Y"){
+			myFile<<arrCounter<<endl;
+			for (int i=0; i<arrCounter;i++){
+				myFile<<voterArray[i].getLastName()<<endl;
+				myFile<<voterArray[i].getFirstName()<<endl;
+				myFile<<voterArray[i].getUserID()<<endl;
+				myFile<<voterArray[i].getPassword()<<endl;
+				myFile<<voterArray[i].getAge()<<endl;
+				myFile<<voterArray[i].getHouseNum()<<endl;
+				myFile<<voterArray[i].getStreetName()<<endl;
+				myFile<<voterArray[i].getTownName()<<endl;
+				myFile<<voterArray[i].getState()<<endl;
+				myFile<<voterArray[i].getZipCode()<<endl;
+				myFile<<voterArray[i].getAmtDonated()<<endl;
+				//cout << "DONE"<<endl;
+			}
+		myFile.close();
+		}
+		else{
+			cout << "Enter 'Save' to try again." << endl;
+		}
+	}
+}
+
+void VoterDatabase::voterLoad(string filename){
+	string line;
+	int count = 0;
+	
+	ifstream myfile(filename.c_str());
+	if (myfile.fail()){
+		cout << "Filename does not exist"<<endl;
+	}
+	else{	
+		getline(myfile, line);
+		istringstream (line)>>count;
+		string lastName;
+		string firstName;
+		string userID;
+		string password;
+		string ageStr;
+		int age;
+		string streetNumStr;
+		int streetNum;
+		string streetName;
+		string townName;
+		string stateIn;
+		string zipCode;
+		string amtDonatedStr;			
+		float amtDonated;
+		for (int i=0; i<count;i++){
+			getline(myfile, lastName);
+			getline(myfile, firstName);
+			getline(myfile, userID);
+			getline(myfile, password);
+			getline(myfile, ageStr);
+			istringstream (ageStr)>>age;
+			getline(myfile, streetNumStr);
+			istringstream (streetNumStr)>>streetNum;
+			getline(myfile, streetName);
+			getline(myfile, townName);
+			getline(myfile, stateIn); 
+			getline(myfile, zipCode);
+			getline(myfile, amtDonatedStr);
+			istringstream (amtDonatedStr)>>amtDonated;
+			
+
+			voterArray[i].setLastName(lastName);
+			voterArray[i].setFirstName(firstName);
+			voterArray[i].setUserID(userID);
+			voterArray[i].setPassword(password);
+			voterArray[i].setAge(age);
+			voterArray[i].setHouseNum(streetNum);
+			voterArray[i].setStreetName(streetName);
+			voterArray[i].setState(stateIn);
+			voterArray[i].setTownName(townName);
+			voterArray[i].setZipCode(zipCode);
+			voterArray[i].setAmtDonated(amtDonated);
+			voterArray[i].viewVoter();
+			arrCounter++;
+		}
+	}
+	myfile.close();
+}
+
+void VoterDatabase::voterReport(){
+	float sumDonations = 0.00;	
+	if (arrCounter == 0){cout<<"No voters in database."<<endl;}
+	for (int i=0; i < arrCounter ;i++){
+		voterArray[i].reportDonor();
+		sumDonations += voterArray[i].getAmtDonated();
+	}
+	cout.precision(2);
+	cout << "Total Amount Donated: $"<< fixed << sumDonations  << endl;
+
+}
+
+void VoterDatabase::voterLogoff(Voter voter){
+	for (int i=0; i<arrCounter; i++){
+		if (voterArray[i].getUserID() == voter.getUserID()){
+			voterArray[i] = voter;
+		}
+	}
+}
+
+
+
+
+
+
